@@ -1,0 +1,78 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Contacts {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+
+    {% include "note/alert.html" %}
+
+    <section class="section">
+      
+        <div class="container-fluid">
+          <header class="text-center">
+            <h2><i class="bi bi-pencil-square text-warning"></i> My <span class="text-warning"> Contacts</span></h2>
+            <p class="lead">See your peeps in one place.</p>
+          </header>
+          <div class="row justify-content-center">
+             <!-- End Table -->
+             <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="row">
+                  <div class="col-md-6 text-center">
+                    <a href="{% url 'archived-contacts' %}" class="mb-4 mt-4 get-started-btn-inverted">Archived Contacts</a>
+                  </div>
+                  <div class="col-md-6 text-center p-2">
+                    <p class="get-started-btn mt-4 text-dark" style="cursor:pointer;" onclick="copyInviteLink()"><i class="bi bi-plus-square"></i> Add Contacts By Giving Them This Link 🥳</p>
+                    <input id="managerID" value="{{user.manager_id}}" type="text" class="invisible">
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  {% if contacts %}
+                  
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Notifications</th>
+                        <th scope="col">Archive</th>
+                        <th scope="col">Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for contact in contacts %}
+                      <tr>
+                        <td><a href="{% url 'contact-details' contact.contact_user_account.id %}"><img class="rounded-circle" style="width:40px;" src="http://127.0.0.1:8000{{contact.contact_user_account.imageURL}}" alt=""> {{contact.contact_user_account.first_name}} {{contact.contact_user_account.last_name}}</a></td>
+                        <td>{% if contact.receive_email_notifications %}<p class="text-success">Accepting</p>{% else %}<p class="text-danger">Not Accepting</p>{% endif %}</td>
+                        <td><a href="{% url 'archive-contact' contact.id %}"><i class="bi bi-trash text-danger"></i></a></td>
+                        <td><a class="get-started-btn-inverted" href="{% url 'contact-details' contact.contact_user_account.id %}">See Details</a></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <div class="row p-5">
+                    <div class="col-md-12 text-center">
+                      <h4>Nothing to see here... 👾</h4> <br> <a href="{% url 'new-contact' %}" class="get-started-btn mb-5 mt-2">Create Your First Contact</a>
+                    </div>
+                  </div>
+                  {% endif %}
+
+                </div>
+
+              </div>
+            </div><!-- End Table -->
+          </div>
+        </div>
+
+    </section>
+
+  </main>
+
+        
+
+{% endblock content %}
+

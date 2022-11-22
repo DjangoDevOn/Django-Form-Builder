@@ -1,0 +1,82 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Signup {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %} 
+
+
+
+<link href="{% static 'css/signuplogin.css' %}" rel="stylesheet">
+
+<main id="main">
+
+  <section>
+    <div class="container" data-aos="fade-up">
+
+        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+    
+                  <div class="d-flex justify-content-center py-4">
+                    
+                  </div><!-- End Logo -->
+    
+                  <div class="card mb-3">
+    
+                    <div class="card-body">
+    
+                      <div class="pt-4 pb-2">
+                        <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                        <p class="text-center small">Enter your personal details to create account</p>
+                      </div>
+    
+                      <form class="row g-3 needs-validation" method="POST">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div style="margin-top: -22%;">
+                          <div class="col-12 mb-3">
+                            <button class="get-started-btn btn-dark mt-3 w-100" type="submit">Create Account</button>
+                          </div>
+                          <div class="col-12">
+                            <div class="row text-center">
+                              <!-- <a class="mb-3 btn btn-lg btn-google btn-block text-uppercase btn-outline" href=""><img src="https://img.icons8.com/color/16/000000/google-logo.png"> Signup With Google</a> -->
+                            </div>
+                            <p class="small mb-0 text-center">Already have an account? <a href="{% url 'login' %}">Log in</a>
+                              <br>
+                              <i><a class="text-center text-small" href="{% url 'reset_password' %}">I forgot my password</a></i>
+                            </p>
+                          </div>
+                        </div>
+                      </form>
+    
+                    </div>
+                  </div>
+    
+                </div>
+              </div>
+            </div>
+    
+          </section>
+
+    </div>
+  </section>
+
+
+  <script>
+    // Get email from session storage and auto-fill the email field
+    const emailField = document.getElementById('id_email')
+    emailField.value = sessionStorage.getItem("email")
+    // Get manager_id from session storage and auto-fill the manager_id field
+    const managerIDField = document.getElementById('id_manager_id')
+    const managerIDDiv = document.getElementById('div_id_manager_id')
+    managerIDField.classList.add('invisible')
+    managerIDDiv.classList.add('invisible')
+    managerIDField.value = sessionStorage.getItem("manager_id")
+     
+    
+  </script>
+
+</main> 
+
+{% endblock content %}

@@ -1,0 +1,83 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Support Tickets {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+  <section class="section">
+
+
+ <div class="page-content">
+
+      <section>
+        <div class="block mt-5">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'add-ticket-response' ticket.id %}" class="btn btn-outline-primary"><i class="fa fa-pencil"></i> Respond</a>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-primary"><p><b>Ticket #</b> <span>{{ ticket.id }}</span></p></h4>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="container" data-aos="fade-up">
+                <div class="row">
+                    <div class="col-md-6">
+                    <p><b class="text-muted">Subject:</b> {{ ticket.subject }}</p>
+                    <p><b class="text-muted">Body:</b> {{ ticket.description }}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                    <p><b class="text-muted">Status:</b> {{ ticket.status }}</p>
+                    <p><b class="text-muted">Created on:</b> {{ ticket.created_at }}</p>
+                    </div>
+                </div>
+
+                <br />
+ 
+
+                {% if responses %}
+                <div class="section">
+                <h4 class="text-primary text-center"> Responses</h4>
+                  <div class="row">
+                      {% for response in responses %}
+                      <div class="card p-5">
+                        {% if response.ticket == ticket %}
+                          {% if response.sender == user %}
+                          <div class="row">
+                          {% else %}
+                          <div class="row">
+                            {% if response.user_read == False%}
+                              <a href="{% url 'mark-response-read' response.id %}" class=""><i class="fa fa-check"></i> Mark as Read</a>
+                            {% endif %}
+                          {% endif %}
+                              <p><span class="text-muted">Day/Time:</span> {{response.created_at}}</p>
+                            </div>
+                            {% if response.sender == user %}
+                              <b class='text-lavendar'>I Said:</b>
+                            {% else %}
+                              <b class='text-lavendar'>Agent Said:</b>
+                            {% endif %}
+                            <b class="text-muted"><span class="text-orange">{{response.msg_content}}</span></b>
+                        {% endif %}
+                        </div> <!-- end cards -->
+                      {% endfor %}
+                    {% endif %}
+                  </div> <!-- end row-->
+               </div> <!-- end section-->
+
+
+        </div>
+      </section>
+</div>
+
+
+</section>
+</main><!-- End #main -->
+ 
+
+{% endblock content %}

@@ -1,0 +1,159 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Support Forum {% endblock title %}
+{% block content %}
+
+
+
+<style>
+
+.post-container h3{
+  text-align:center;
+  text-transform: uppercase;
+}
+
+    select {
+      width: 75px;
+      height: 40px;
+      border-radius: 5px;
+    }
+
+
+    .post {
+      width: 95%;
+      height: auto;
+      display: block;
+      padding: 10px;
+      background-color: #fff;
+      color: #000;
+      margin: 10px auto;
+      border-radius: 5px;
+      box-shadow: 3px 3px 5px #ddd;
+    }
+
+    .post > * {
+      display: block;
+      margin: 5px;
+      font-size: 16px;
+    }
+
+    .author {
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    .title { font-weight: bold; }
+
+    .content span { color: purple; }
+
+</style>
+
+
+<main id="main" class="main">
+  <section class="section">
+
+    <div class="page-content">
+            
+
+            {% include 'support/support-header.html' %}
+
+        <h4 class="text-orange mt-5" style="margin-left:39%;">Select a Category</h4>
+        <select style="width:20%; margin-left:39%;" aria-label="Select Post Type" class="mt-5 mb-5 form-select post-type">:
+          <option value="hot" selected>Hot</option>
+          <option value="new">New</option>
+          <option value="top">Top</option>
+          <option value="random">Random</option>
+          <option value="rising">Rising</option>
+          <option value="controversial">Controversial</option>
+        </select>
+
+
+        <div class="post-container pt-4 pb-4 invisible" style="width:60%; margin-left:20%;">
+          <h3 class="text-light">hot posts from r/JavaScript</h3>
+          <a class="post" href="{original link for post goes here}">
+            <div class="title"></div>
+            <div class="content"> </div>
+            <div class="author"> </div>
+          </a>
+          <a class="post" href="{original link for post goes here}">
+            <div class="title"></div>
+            <div class="content"> </div>
+            <div class="author"> </div>
+          </a>
+        </div>
+
+  </section>
+</main><!-- End #main -->
+ 
+      <script>
+        const container = document.querySelector(".post-container");
+
+        const renderPosts = (postType) => {
+          // Our proxy that makes cross origin fetching possible
+          const proxy = "https://cors-anywhere.herokuapp.com//";
+
+          fetch(`${proxy}https://www.reddit.com/r/javascript/${postType}.json`)
+          .then(function(res) {
+              // Return the response in JSON format
+              return res.json();
+          })
+          .then(function(res) {
+              // We render our posts to the UI in this block
+              let currPost, markup = ``;
+
+              // The array that contains our posts
+              const postsArr = res.data.children;
+
+              // Add a header based on post type
+              markup = `<h3>${postType} posts from r/JavaScript</h3>`;
+
+              // Iterate through our posts array and chain
+              // the markup based on our HTML structure
+              for (let i = 0; i < postsArr.length; i++) {
+                currPost = postsArr[i].data;   // a single post object
+                markup += `
+                <div class="card">
+                <div class="card-body">
+                      <h4 class="text-orange"> ${currPost.title} </h4>
+                      <div>
+                          ${currPost.selftext}
+                          <a href="${currPost.url}" class="get-started-btn mt-3-orange btn-sm">Read Post</a>
+                          <a href="https://www.reddit.com/${currPost.permalink}" class="get-started-btn mt-3-orange btn-sm">Permalink</a>
+                      </div>
+                      <p> Posted by ${currPost.author} </p>
+                </div>
+                </div>
+                `;
+              }
+              // Insert the markup HTML to our container
+              container.insertAdjacentHTML('afterbegin',markup);
+          })
+          .catch(function(err) {
+              console.log(err);   // Log error if any
+          });
+        };
+
+
+
+        const dropdown = document.querySelector(".post-type");
+
+        dropdown.addEventListener("change", () => {
+          // Gets the currently selected option index
+          let index = dropdown.selectedIndex;
+          // Gets the currently selected option value
+          let value = dropdown.options[index].value;
+
+          // Pass the value to our function
+          // which performs the rendering
+          renderPosts(value);
+          container.classList.remove("invisible");
+        });
+
+      </script>
+
+
+
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,201 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | New Note {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+     <!-- alert -->
+     {% if alert %}<script>
+      confetti({
+        particleCount: 100,
+        startVelocity: 30,
+        spread: 360,
+        origin: {
+          x: Math.random(),
+          // since they fall down, start a bit higher than random
+          y: Math.random() - 0.2
+        }
+      });
+    </script>
+     <div class="alert alert-warning" role="alert" id="alert">
+         <div class="container-fluid">
+           <div class="row justify-content-center">
+             <div class="col-md-12 text-center">
+               <h4 class="mt-2">{{ alert|safe }}</h4>
+             </div>
+           </div>
+         </div>
+     </div>
+     <script>
+         const alertBox = document.getElementById('alert')
+         function hideAlert() {
+             alertBox.remove()
+         }
+         setTimeout(hideAlert, 6000)
+     </script>
+
+     <section class="mt-3">
+       <div class="container-fluid">
+         <div class="row justify-content-center">
+           <div class="col-md-6 mt-4 text-center">
+             <a href="{% url 'forms' %}" class="get-started-btn mt-4 mb-5">Create Another Note</a>
+           </div>
+             {% for note in notes %} 
+             <div class="row justify-content-center">
+               <div class="col-md-6 mt-4">
+                 <div class="card p-5">
+                   <h5 class="text-center"><a href="{% url 'note-details' note.id %}">{{note.form_settings.title}}</a></h5>
+                 </div>
+               </div>
+             </div>
+             {% endfor %}
+           </div>
+         </div>
+       </div>
+     </section>
+     {% else %}
+    <section class="mt-3">
+        <div class="container-fluid">
+          <header class="text-center">
+            <h2><i class="bi bi-ui-checks text-warning"></i> New <span class="text-warning"> Meeting Note</span></h2>
+            {{time_tracker|safe}}
+          </header>
+            <div class="row justify-content-center" style="margin-top:-3%;">
+              <div class="col-md-8">
+                <div class="card mt-5">
+                  <div class="card-body">
+
+                    <h2 class="mt-5 text-dark text-center">{{ form_settings.title|title }}</h2>
+    
+                    <h5 style="color:#6f6f6f;" class="text-center">Project: <b>{{ project.title|title }}</b></h5>
+
+                    <p class="text-center text-warning">Time Goal: <b><u>{{ form_settings.meeting_time_goal }} Minutes</u></b> | <span>Scheduled Time: <b><u>{{form_settings.scheduled_time}}</u></b></span></p>
+
+                      <!-- Room Link (Conditional)-->
+                      {% if form_settings.meeting_room_link %} 
+                      <div class="row mt-4">
+                        <div class="col-md-12 text-center">
+                          <a class="get-started-btn" href="{{form_settings.meeting_room_link}}">Join Meeting</a>
+                        </div>
+                      </div>
+                      {% endif %}
+
+                    <form action="{% url 'create-note' form_settings.pk %}" method="POST">
+                      {% csrf_token %}
+                          
+                        <div class="section">
+                          
+                          <div class="row m-5">
+                            <!-- Participants -->
+                            <div class="col-md-6">
+                              <p>🤓 Participants:</p>
+                              <select class="form-control" name="participants" multiple required oninvalid="this.setCustomValidity('At least one person was at the meeting, no?')"
+                              oninput="this.setCustomValidity('')">
+                                {% for participant in team_members %}
+                                  <option value="{{ participant.id }}">{{ participant.contact_user_account.first_name }} {{ participant.contact_user_account.last_name }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <!-- Notify Users -->
+                            <div class="col-md-6">
+                              <p>⏰ Notify These Users: <span class="text-center" style="color:#9a9999; font-size:10px;">(Optional)</span></p>
+                              <select class="form-control" name="notify-users" multiple>
+                                {% for participant in team_members %}
+                                  {% if participant.receive_email_notifications %}
+                                    <option value="{{ participant.id }}">{{ participant.contact_user_account.first_name }} {{ participant.contact_user_account.last_name }}</option>
+                                  {% endif %}
+                                {% endfor %}
+                              </select>
+                            </div>
+                          </div>
+ 
+                          
+                          <!-- Dynamic Text Fields -->
+                            {% for q in questions %} 
+                              <div class="row m-5">
+                                <label for="text_field_answers">👉 {{ q.question }}</label>
+                                <textarea name="text_field_answers" id="text_field_answers" cols="30" rows="5" required oninvalid="this.setCustomValidity('This is an important question!')"
+                                oninput="this.setCustomValidity('')"></textarea>
+                              </div>
+                            {% endfor %} 
+                          </div>
+
+                            <!-- Meeting Link (Conditional)-->
+                            {% if form_settings.sometimes_record %} 
+                            <div class="row m-5">
+                              <div class="col-md-12">
+                                <label for="video_link">🎥 Hosted Meeting Recording:</label>
+                                <input class="form-control" type="text" name="video_link" id="video_link" placeholder="EX: video-host.com/{{form_settings.title}}" required oninvalid="this.setCustomValidity('Did you forget to add visual documentation?')"
+                                oninput="this.setCustomValidity('')">
+                              </div>
+                            </div>
+                          {% endif %}
+
+                          <div class="row m-5">
+                            <div class="col-md-6">
+                              <label for="time">⏱️ Meeting Lasted:</label>
+                              <select class="form-control" name="meeting_time" id="time" required oninvalid="this.setCustomValidity('Yikes! Was the meeting over before it started?')"
+                              oninput="this.setCustomValidity('')">
+                                  <option value="">Choose Duration</option>
+                                  <option>5 minutes</option>
+                                  <option>10 minutes</option>
+                                  <option>15 minutes</option>
+                                  <option>20 minutes</option>
+                                  <option>25 minutes</option>
+                                  <option>30 minutes</option>
+                                  <option>35 minutes</option>
+                                  <option>40 minutes</option>
+                                  <option>45 minutes</option>
+                                  <option>50 minutes</option>
+                                  <option>55 minutes</option>
+                                  <option>60 minutes</option>
+                                  <option>Canceled</option>
+                              </select>
+                            </div>
+
+                          <div class="col-md-6">
+                            <label for="priority">⚠️ Priority Level</label>
+                            <select class="form-control" name="priority" id="priority" required oninvalid="this.setCustomValidity('How important was the meeting, if it\'s High Priority we\'ll let someone know!')"
+                            oninput="this.setCustomValidity('')">
+                              <option value="">Choose Priority</option>
+                                <option>Low Priority</option>
+                                <option>Medium Priority</option>
+                                <option>High Priority</option>
+                            </select>
+                          </div>
+                        </div>
+                        </div>
+
+                          <!-- Submit Button -->
+                          <div class="col-md-12 text-center mb-5">
+                            <button type="submit" class="text-center get-started-btn">Save Meeting Note</button>
+                          </div>
+            
+                      </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    {% endif %}
+  
+
+  </main>
+
+
+
+  <script>
+
+    function addTextField(){
+       var target = document.getElementById('faq_section');
+       var clonedTarget = target.cloneNode(true);
+       target.parentNode.insertBefore(clonedTarget, target);
+    }
+  </script>
+ 
+
+{% endblock content %}
+

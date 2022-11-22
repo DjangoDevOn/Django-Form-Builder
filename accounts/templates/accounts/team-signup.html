@@ -1,0 +1,23 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Signup {% endblock title %}
+
+{% block content %} 
+
+
+<main id="main">
+  <!-- Spinner -->
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <div class="mt-2 mb-5 spinner-border text-warning" role="status" id="spinner-box"></div>
+    </div>
+  </div>
+</main> 
+
+<script>
+    manager_id = location.pathname.split('/')[3] // get manager id from pk
+    sessionStorage.setItem("manager_id", manager_id); // cache the id
+    window.location = "http://127.0.0.1:8000/accounts/signup/"; // redirect to signup page
+</script>
+
+{% endblock content %}

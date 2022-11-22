@@ -1,0 +1,51 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Edit User Profile {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+ 
+
+<main id="main" class="main">
+
+    <section>
+        <div class="container-fluid mt-4">
+            <div class="row justify-content-center">
+                <h3 class="mb-3 text-center">Profile Settings</h3>
+                <div class="col-md-3 mb-5">
+                    <div class="row justify-content-center">
+                        <img src="" id="profileImgDisplay" class="rounded-circle img-fluid" alt="" style="width:80%;">
+                        <!-- <form action="{% url 'signup' %}" method="post">
+                            {% csrf_token %}
+                            <input type="email" id="emailFormFooter" name="email"><input type="submit" value="Enter your email">
+                        </form> -->
+                        <p class="mt-3 mb-3"><b>{{user.email}}</b> <a href="{% url 'edit-email' user.id %}"><i class="bi bi-pencil"></i></a></p>
+                    </div>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {{ form|crispy }}
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <button class="get-started-btn mt-3">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+
+<!-- Change default Django image URL to show the image -->
+<script>
+    const parentDiv = document.getElementById('div_id_profile_photo')
+    const profileImgDisplay = document.getElementById('profileImgDisplay')
+    const anchor = parentDiv.querySelector('a')
+    profileImgDisplay.src = anchor.href
+    div_id_profile_photo.remove()
+</script>
+
+ 
+{% endblock content %}

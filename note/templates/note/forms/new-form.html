@@ -1,0 +1,357 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | New Form {% endblock title %}
+{% block content %} 
+
+ 
+  <main id="main" class="main">
+    <!-- General Alert -->
+    {% if general_alert %}
+    <div class="alert alert-warning" role="alert" id="alert">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+              <h4 class="mt-2">{{ general_alert }}</h4>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script>
+        const generalAlertBox = document.getElementById('alert')
+        function hideAlert() {
+          generalalertBox.remove()
+        }
+        setTimeout(hideAlert, 6000)
+    </script>
+    <!-- End General Alert -->
+    {% endif %}
+    
+      <!-- New Form Created - Page specific alert -->
+      {% include "note/alert.html" %}
+      {% if forms %} 
+      
+      <section class="mt-3">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-md-6 mt-4 text-center">
+              <a href="{% url 'new-form' %}" class="get-started-btn mt-4 mb-5">Create Another Form</a>
+            </div>
+            {% if forms %} 
+              {% for form in forms %} 
+              <div class="row justify-content-center">
+                <div class="col-md-6 mt-4">
+                  <div class="card p-5">
+                    <h5 class="text-center"><a href="{% url 'form-details' form.id %}">{{form.title}}</a></h5>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %} 
+                <a href="{% url 'new-form' %}" class="get-started-btn mt-2 mb-2">Create your first Form!</a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+      {% else %}
+
+      <section class="mt-3">
+        <div class="container-fluid">
+          <header class="text-center">
+            <h2><i class="bi bi-textarea-resize text-warning"></i> Create <span class="text-warning"> New Meeting Form</span></h2>
+            <p class="lead">Select what info you'll want during a meeting.</p>
+          </header>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <div class="card mt-5">
+                  <div class="card-body">
+    
+                    <!-- <h3 class="mt-5 text-warning text-center"><b>Title: </b> goes here</h3> -->
+    
+                    <form action="" method="POST">
+                      {% csrf_token %}
+                          
+                        <div class="section">
+                          
+                          <div class="row m-5">
+                            
+                          <!-- Title -->
+                          <div class="row">
+                              <div class="col-md-6 mt-4">
+                                <label for="title">Name Your Form </label>
+                                  <input class="form-control" type="text" name="title" id="title" required>
+                                  <!-- <p style="font-size:9px;">*Leave blank for default: <b>Date - Project Name</b></p> -->
+                              </div>
+
+                              <!-- Time meeting to last goal -->
+                              <div class="col-md-6 mt-4">
+                                <label for="meeting_time_goal">Max Meeting Time (Goal) </label>
+                                <select class="form-control" name="meeting_time_goal" required oninvalid="this.setCustomValidity('You really should set a time goal, so you can track your progress! 🤓')"
+                                oninput="this.setCustomValidity('')">
+                                    <option value="">Maximum length</option>
+                                    <option>5 minutes</option>
+                                    <option>10 minutes</option>
+                                    <option>15 minutes</option>
+                                    <option>20 minutes</option>
+                                    <option>25 minutes</option>
+                                    <option>30 minutes</option>
+                                    <option>35 minutes</option>
+                                    <option>40 minutes</option>
+                                    <option>45 minutes</option>
+                                    <option>50 minutes</option>
+                                    <option>55 minutes</option>
+                                    <option>60 minutes</option>
+                                </select>
+                                </div>
+                            </div>
+                    
+
+                          <!-- Project -->
+                          <div class="row">
+                              <div class="col-md-6 mt-4">
+                              <label for="project">Which Project </label> 
+                              {% if projects %}
+                              <select class="form-control" name="project" id="project" required oninvalid="this.setCustomValidity('Don\'t forget to add a project so you know what project your notes are all about!')"
+                              oninput="this.setCustomValidity('')">
+                                <option value="">Pick a project</option>
+                                {% for project in projects %}
+                                  <option onclick="addProjectTitleToFormTitle('{{ project.title }}')" value="{{ project.id }}">{{ project.title }}</option>
+                                {% endfor %}
+                                </select>
+                                {% else %}
+                                <!-- Button trigger modal -->
+                                <button type="button" class="get-started-btn" id="projectBtn">
+                                  Create Your First Project
+                                </button>
+                                {% endif %}
+                              
+                              </div>
+
+                            <!-- Team -->
+                              <div class="col-md-6 mt-4">
+                                <label for="team">Which Team </label> 
+                                  {% if teams %}
+                                  <select class="form-control" id="team" name="team" required oninvalid="this.setCustomValidity('Your team misses you..')"
+                                  oninput="this.setCustomValidity('')">
+                                    <option value="">Pick a team</option>
+                                      {% for team in teams %}
+                                      <option value="{{ team.id }}">{{ team.title }}</option>
+                                      {% endfor %}
+                                  </select>
+                                  {% else %}
+                                  <!-- Button trigger modal -->
+                                  <button type="button" class="get-started-btn" id="teamBtn">
+                                    Create Your First Team
+                                  </button>
+                                  {% endif %}
+                              </div>
+
+                               <!-- Static Meeting Room Link -->
+                               <div class="col-md-6 mt-4">
+                                <label for="static_meeting_link">Static Meeting Room <span class="text-center" style="color:#9a9999; font-size:10px;">(Optional)</span></label> 
+                                <input type="text" class="form-control" name="static_meeting_link" id="static_meeting_link">
+                              </div>
+
+                               <!-- Scheduled Meeting Start Time -->
+                               <div class="col-md-6 mt-4">
+                                <label for="start_time">Start Time </label> 
+                                <select class="form-control" name="start_time" id="start_time" required oninvalid="this.setCustomValidity('Your team needs routine..')"
+                                oninput="this.setCustomValidity('')">
+                                  
+                                  <option>1:00 AM</option>
+                                  <option>1:15 AM</option>
+                                  <option>1:30 AM</option>
+                                  <option>1:45 AM</option>
+                                  <option>2:00 AM</option>
+                                  <option>2:15 AM</option>
+                                  <option>2:30 AM</option>
+                                  <option>2:45 AM</option>
+                                  <option>3:00 AM</option>
+                                  <option>3:15 AM</option>
+                                  <option>3:30 AM</option>
+                                  <option>3:45 AM</option>
+                                  <option>4:00 AM</option>
+                                  <option>4:15 AM</option>
+                                  <option>4:30 AM</option>
+                                  <option>4:45 AM</option>
+                                  <option>5:00 AM</option>
+                                  <option>5:15 AM</option>
+                                  <option>5:30 AM</option>
+                                  <option>5:45 AM</option>
+                                  <option>6:00 AM</option>
+                                  <option>6:15 AM</option>
+                                  <option>6:30 AM</option>
+                                  <option>6:45 AM</option>
+                                  <option>7:00 AM</option>
+                                  <option>7:15 AM</option>
+                                  <option>7:30 AM</option>
+                                  <option>7:45 AM</option>
+                                  <option>8:00 AM</option>
+                                  <option>8:15 AM</option>
+                                  <option>8:30 AM</option>
+                                  <option>8:45 AM</option>
+                                  <option>9:00 AM</option>
+                                  <option>9:15 AM</option>
+                                  <option>9:30 AM</option>
+                                  <option>9:45 AM</option>
+                                  <option>10:00 AM</option>
+                                  <option>10:15 AM</option>
+                                  <option>10:30 AM</option>
+                                  <option>10:45 AM</option>
+                                  <option>11:00 AM</option>
+                                  <option>11:15 AM</option>
+                                  <option>11:30 AM</option>
+                                  <option>11:45 AM</option>
+                                  <option>12:00 PM</option>
+                                  <option>12:15 PM</option>
+                                  <option>12:30 PM</option>
+                                  <option>12:45 PM</option>
+                                  <option>1:00 PM</option>
+                                  <option>1:15 PM</option>
+                                  <option>1:30 PM</option>
+                                  <option>1:45 PM</option>
+                                  <option>2:00 PM</option>
+                                  <option>2:15 PM</option>
+                                  <option>2:30 PM</option>
+                                  <option>2:45 PM</option>
+                                  <option>3:00 PM</option>
+                                  <option>3:15 PM</option>
+                                  <option>3:30 PM</option>
+                                  <option>3:45 PM</option>
+                                  <option>4:00 PM</option>
+                                  <option>4:15 PM</option>
+                                  <option>4:30 PM</option>
+                                  <option>4:45 PM</option>
+                                  <option>5:00 PM</option>
+                                  <option>5:15 PM</option>
+                                  <option>5:30 PM</option>
+                                  <option>5:45 PM</option>
+                                  <option>6:00 PM</option>
+                                  <option>6:15 PM</option>
+                                  <option>6:30 PM</option>
+                                  <option>6:45 PM</option>
+                                  <option>7:00 PM</option>
+                                  <option>7:15 PM</option>
+                                  <option>7:30 PM</option>
+                                  <option>7:45 PM</option>
+                                  <option>8:00 PM</option>
+                                  <option>8:15 PM</option>
+                                  <option>8:30 PM</option>
+                                  <option>8:45 PM</option>
+                                  <option>9:00 PM</option>
+                                  <option>9:15 PM</option>
+                                  <option>9:30 PM</option>
+                                  <option>9:45 PM</option>
+                                  <option>10:00 PM</option>
+                                  <option>10:15 PM</option>
+                                  <option>10:30 PM</option>
+                                  <option>10:45 PM</option>
+                                  <option>11:00 PM</option>
+                                  <option>11:15 PM</option>
+                                  <option>11:30 PM</option>
+                                  <option>11:45 PM</option>
+                                  <option>12:00 AM</option>
+                                  <option>12:15 AM</option>
+                                  <option>12:30 AM</option>
+                                </select>
+                               </div>
+                        
+                          <!-- Dynamic Text Field Titles (Questions) -->
+                          <div class="col-md-12 mt-4" id="questions_section">
+                              <label for="text_field_questions">Note Section / Question </label>
+                              <input name="text_field_questions" id="text_field_questions" type="text" class="form-control" placeholder="Write your question.." required oninvalid="this.setCustomValidity('Don\'t forget to prompt yourself or whoever fills out your Meeting Form!')"
+                              oninput="this.setCustomValidity('')">
+                          </div>
+                          <div class="row mt-3" style="margin-left:78%;">
+                            <div class="col-md-12">
+                              <i onclick="removeLastTextField()" id="removeBtn" style="font-size:35px;" class="invisible text-danger bi bi-dash-circle-fill mt-3"></i>
+                              <i onclick="addTextField()" style="font-size:35px;" class="text-success bi bi-plus-circle-fill mt-3"></i>
+                            </div>
+                          </div>
+
+                          <!-- Do they ever want to include a recording in the MeetingNote? -->
+                          <div class="section-fluid">
+                            <div class="row justify-content-center">
+                              <div class="form-check mb-4" style="margin-left:45%;">
+                                <input class="form-check-input" type="checkbox" id="sometimes_record" value="True" name="sometimes_record" id="flexCheckChecked" checked>
+                                <label class="form-check-label" for="sometimes_record">
+                                  Ask for a meeting recording link?
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          
+                        
+
+                        <!-- Submit Button -->
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="text-center get-started-btn mt-1">Create Form</button>
+                        </div>
+            
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {% endif %}
+
+    </main>
+
+
+
+  <!-- Add / Subtract Text Fields in Form Builder -->
+  <!-- TODO: this is copied in "edit-form" so make this a script file -->
+  <script>
+    // nodeCount: this makes the removeBtn vanish when there's just one field so it doesn't erase all fields!
+    var target = document.getElementById('questions_section');
+    var nodeCount = target.childElementCount
+
+    // Add/Clone text field, clear text in each clone
+    function addTextField(){ removeBtn
+      var removeBtn = document.getElementById('removeBtn');
+      nodeCount += 1
+      removeBtn.classList.remove('invisible') // show the removeBtn when you add your first field, so it doesn't show by default until you add a second field
+      var target = document.getElementById('questions_section');
+      var clonedTarget = target.cloneNode(true);
+      target.parentNode.insertBefore(clonedTarget, target);
+      // ToDo: clear text in each clone
+    }
+    
+    // Remove text field clone, except if there's just one left - then hide removeBtn
+    function removeLastTextField(){
+      var target = document.getElementById('questions_section');
+      var removeBtn = document.getElementById('removeBtn');
+      nodeCount = nodeCount - 1
+      target.lastChild.parentNode.remove()
+      if (nodeCount < 3) {
+        removeBtn.classList.add('invisible')
+      }
+    }
+
+    // Add date as default for title
+    var formName = document.getElementById('title')
+    var myToday = new Date().toLocaleString('en-US')
+    myToday = myToday.slice(0,9)
+    formName.setAttribute('value', myToday)
+
+    // Add project title to the date default value for "Title"
+    function addProjectTitleToFormTitle(projectTitle) {
+      myToday = myToday.slice(0,9) + ' | ' + projectTitle
+      formName.setAttribute('value', myToday)
+    }
+                             
+
+  </script>
+   
+
+
+
+  {% endblock content %}
+  
+  
+   
+   
+  

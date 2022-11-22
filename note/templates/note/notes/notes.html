@@ -1,0 +1,152 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Notes {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+
+    {% include "note/alert.html" %}
+
+    <!-- Main User Type Check (Sections Differ Greatly) -->
+      {% if user.team_user %}
+      <!-- Team Users: Cannot "Archive" notes, add changes to main/manager section here: -->
+        <section class="section">
+            
+          <div class="container-fluid">
+            <header class="text-center">
+              <h2><i class="bi bi-pencil-square text-warning"></i> Standup <span class="text-warning"> Notes</span></h2>
+              <p class="lead">Read & Comment on Your Team's Meeting Notes.</p>
+            </header>
+            <div class="row justify-content-center">
+              <!-- End Table -->
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
+                  <div class="card-body">
+                    
+                    {% if team_notes %}
+
+                    <table class="table table-borderless datatable">
+                      <thead>
+                        <tr>
+                          <th scope="col">Form Name</th>
+                          <th scope="col">Has Comments</th>
+                          <th scope="col">Team</th>
+                          <th scope="col">Project</th>
+                          <th scope="col">Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for note in team_notes %}
+                          <tr>
+                            <td>{{note.form_settings.title}}</td>
+                            <td>{% if note.has_comments %}<span class="text-success">Yes</span>{% else %}No{% endif %}</td>
+                            <td><a href="{% url 'team-details' note.form_settings.team.id %}">{{note.form_settings.team.title|title}}</a></td>
+                            <td><a href="{% url 'project-details' note.form_settings.project.id %}">{{note.form_settings.project.title|title}}</a></td>
+                            <td><a href="{% url 'note-details' note.id %}" class="get-started-btn-inverted">See Details</a></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    {% else %}
+                    <div class="row p-5">
+                      <div class="col-md-12 text-center">
+                        {% if user.team_user %}
+                        <!-- Hide BUTTON from team users -->
+                        <h4>Nothing to see here... 👾</h4>
+                      {% else %}
+                      <h4>Nothing to see here... 👾</h4> <br> <a href="{% url 'forms' %}" class="get-started-btn mb-5 mt-2">Create Your First Note</a>
+                      {% endif %}
+                      </div>
+                    </div>
+                    {% endif %}
+
+                  </div>
+
+                </div>
+              </div><!-- End Table -->
+            </div>
+          </div>
+
+        </section>
+      {% else %}
+        <section class="section">
+          
+            <div class="container-fluid">
+              <header class="text-center">
+                <h2><i class="bi bi-pencil-square text-warning"></i> Standup <span class="text-warning"> Notes</span></h2>
+                <p class="lead">Fill out your custom Forms.</p>
+              </header>
+              <div class="row justify-content-center">
+                <!-- End Table -->
+                <div class="col-12">
+                  <div class="card recent-sales overflow-auto">
+
+                    <div class="card-body">
+
+                      <div class="row">
+                        <div class="col-md-12 text-center">
+                          <a href="{% url 'archived-notes' %}" class="mb-4 mt-4 get-started-btn-inverted">Archived Notes</a>
+                        </div>
+                      </div>
+                      
+                      {% if manager_notes %}
+
+                      <table class="table table-borderless datatable">
+                        <thead>
+                          <tr>
+                            <th scope="col">Form Name</th>
+                            <th scope="col">Has Comments</th>
+                            <th scope="col">Archive</th>
+                            <th scope="col">Details</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for note in manager_notes %}
+                          <tr>
+                            <td>{{note.form_settings.title}}</td>
+                            <td>{% if note.has_comments %}<span class="text-success">Yes</span>{% else %}No{% endif %}</td>
+                            <td><a href="{% url 'archive-note' note.id %}"><i class="bi bi-trash text-danger"></i></a></td>
+                            <td><a href="{% url 'note-details' note.id %}" class="get-started-btn-inverted">See Details</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      {% else %}
+                      <div class="row p-5">
+                        <div class="col-md-12 text-center">
+                          {% if user.team_user %}
+                          <!-- Hide BUTTON from team users -->
+                          <h4>Nothing to see here... 👾</h4>
+                        {% else %}
+                        <h4>Nothing to see here... 👾</h4> <br> <a href="{% url 'forms' %}" class="get-started-btn mb-5 mt-2">Create Your First Note</a>
+                        {% endif %}
+                        </div>
+                      </div>
+                      {% endif %}
+
+                    </div>
+
+                  </div>
+                </div><!-- End Table -->
+              </div>
+            </div>
+
+        </section>
+      {% endif %}
+    <!-- End Main User Type Check -->
+
+  </main>
+
+        
+
+{% endblock content %}
+
+
+
+
+
+
+
+

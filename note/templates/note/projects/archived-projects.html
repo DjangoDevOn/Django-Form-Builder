@@ -1,0 +1,78 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Archived Projects {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+
+    {% include "note/alert.html" %}
+
+    <section class="section">
+      
+        <div class="container-fluid">
+          <header class="text-center">
+            <h2><i class="bi bi-pencil-square text-warning"></i> Archived <span class="text-warning"> Projects</span></h2>
+            <p class="lead">View your Archived Projects.</p>
+          </header>
+          <div class="row justify-content-center">
+             <!-- End Table -->
+             <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                 
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                      <a href="{% url 'projects' %}" class="mb-4 mt-4 get-started-btn-inverted">View All Projects</a>
+                    </div>
+                  </div>
+                  
+                <div class="card-body">
+                  {% if projects %}
+                 
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Team</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Revive</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for project in projects %}
+                      <tr>
+                        <td>{{project.title}}</td>
+                        <td>{{project.team.title}}</td>
+                        <td>{{project.created|date:"M d, Y" }}</td>
+                        <td><a href="{% url 'project-details' project.id %}" class="get-started-btn-inverted">See Details</a></td>
+                        <td><a href="{% url 'revive-project' project.id %}"><i class="bi bi-check text-success"></i></a></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <div class="row p-5">
+                    <div class="col-md-12 text-center">
+                        <h4>Nothing to see here... 👾</h4>  
+                    </div>
+                  </div>
+                  {% endif %}
+
+                </div>
+
+              </div>
+            </div><!-- End Table -->
+          </div>
+        </div>
+
+    </section>
+
+  </main>
+
+        
+
+{% endblock content %}
+

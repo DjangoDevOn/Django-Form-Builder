@@ -1,0 +1,190 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Edit Email Notifications {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<!-- Switch Styles -->
+<!-- https://www.w3schools.com/howto/howto_css_switch.asp -->
+<style>
+ /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #5EA2CD;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #5EA2CD;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+</style>
+
+<main id="main" class="main">
+  <section class="section">
+
+    
+
+<div class="page-content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">Edit Your Notifications</h2>
+        </div>
+    </div>
+
+    <section>
+        <div class="block mt-5">
+            <h3 class="mb-3 text-center">Email Notification Settings</h3>
+                <h4 class="mb-4 text-center text-orange">Your Email: {{user.email}}  <a href="{% url 'edit-email' settings.user.id %}" class="get-started-btn mt-3 btn-sm">Update</a></h4>
+
+                <p>Activity Notifications: {% if settings.receive_email_notifications %}<label class="switch"><input class="select-activity" type="checkbox" checked><span class="slider round"></span></label> {% else %} <label class="switch"><input class="select-activity" type="checkbox"><span class="slider round"></span></label>{% endif %}</p>
+                <br>
+                <p>Support Notifications: {% if settings.notify_support %}<label class="switch"><input class="select-support" type="checkbox" checked><span class="slider round"></span></label> {% else %} <label class="switch"><input class="select-support" type="checkbox"><span class="slider round"></span></label>{% endif %}</p>
+                <br>
+                <p>Marketing Notifications: {% if settings.notify_marketing %}<label class="switch"><input class="select-marketing" type="checkbox" checked><span class="slider round"></span></label> {% else %} <label class="switch"><input class="select-marketing" type="checkbox"><span class="slider round"></span></label>{% endif %}</p>
+                <br>
+                <p>Messages Notifications: {% if settings.notify_messages %}<label class="switch"><input class="select-messages" type="checkbox" checked><span class="slider round"></span></label> {% else %} <label class="switch"><input class="select-messages" type="checkbox"><span class="slider round"></span></label>{% endif %}</p>
+                <!--<p>Referral Notifications: {% if settings.notify_referral %}<label class="switch"><input class="select-referral" type="checkbox" checked><span class="slider round"></span></label>{% else %}<label class="switch"><input class="select-referral" type="checkbox"><span class="slider round"></span></label>{% endif %}</p>-->
+
+        </div>
+    </section>
+</div>
+
+
+</section>
+</main><!-- End #main -->
+ 
+
+<script>
+
+  const selectActivity = document.querySelector(".select-activity");
+  const selectSupport = document.querySelector(".select-support");
+  const selectMarketing = document.querySelector(".select-marketing");
+  const selectMessages = document.querySelector(".select-messages");
+  //const selectReferral = document.querySelector(".select-referral");
+
+  selectActivity.addEventListener("change", () => {
+    $.ajax({
+      type: 'GET',
+      url: '/accounts/toggle-activity-notifications',
+      success: function(response){
+        console.log(response)
+      },
+      error: function(error){
+        console.log(error)
+      }
+    })
+  });
+
+
+  selectSupport.addEventListener("change", () => {
+    $.ajax({
+      type: 'GET',
+      url: '/accounts/toggle-support-notifications',
+      success: function(response){
+        console.log(response)
+      },
+      error: function(error){
+        console.log(error)
+      }
+    })
+});
+
+
+selectMarketing.addEventListener("change", () => {
+  $.ajax({
+    type: 'GET',
+    url: '/accounts/toggle-marketing-notifications',
+    success: function(response){
+      console.log(response)
+    },
+    error: function(error){
+      console.log(error)
+    }
+  })
+});
+
+
+selectMessages.addEventListener("change", () => {
+  $.ajax({
+    type: 'GET',
+    url: '/accounts/toggle-messages-notifications',
+    success: function(response){
+      console.log(response)
+    },
+    error: function(error){
+      console.log(error)
+    }
+  })
+});
+
+
+  {% comment %} selectReferral.addEventListener("change", () => {
+      $.ajax({
+        type: 'GET',
+        url: '/accounts/toggle-ref-notifications',
+        success: function(response){
+          console.log(response)
+        },
+        error: function(error){
+          console.log(error)
+        }
+      })
+  }); {% endcomment %}
+
+
+</script>
+
+{% endblock content %}

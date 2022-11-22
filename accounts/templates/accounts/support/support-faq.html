@@ -1,0 +1,45 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Support FAQ {% endblock title %}
+{% block content %}
+
+
+<main id="main" class="main">
+  <section class="section">
+
+  <div class="page-content">
+          
+    <h3 class="text-center mb-4 mt-5">Check out our frequently asked questions</h3>
+
+
+        <section>
+          <div class="block mt-5">
+            <!--Section: FAQ-->
+            <section>
+              <div class="block mt-5">
+                  <div class="row mt-4">
+                  {% for cat in categories %}
+                      <h4 class="text-center mb-4">{{cat.cat_title|title}}</h4>
+                      {% for faq in faqs %}
+                          {% if faq.category == cat %}
+                              <div class="col-md-6 col-lg-4 mb-4">
+                                  <h6 class="mb-3 text-primary"><i class="icon-light-bulb text-primary pe-2"></i> {{faq.question}}</h6>
+                                  <p>
+                                  {{faq.answer}}
+                                  </p>
+                              </div>
+                          {% endif %}
+                      {% endfor %}
+                  {% endfor %}
+                  </div>
+              </div>
+          </section>
+            <!--Section: FAQ-->
+          </div>
+        </section>
+  </div>
+</section>
+</main><!-- End #main -->
+  
+
+{% endblock content %}

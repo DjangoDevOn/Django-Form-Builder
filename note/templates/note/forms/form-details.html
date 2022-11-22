@@ -1,0 +1,125 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Form Details {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+
+    <header class="text-center">
+      <h2><i class="bi bi-textarea-resize text-warning"></i> Form <span class="text-warning"> Details</span></h2>
+    </header>
+
+    <section class="section">
+      
+        <div class="container-fluid">
+          <div class="row justify-content-center p-5">
+            <div class="col-md-12 text-center mb-3">
+              <h2>{{form_settings.title|title}} </h2>
+              <i><small>Created: <b>{{form_settings.created|date:"M d, Y" }}</b></small></i>
+            </div>
+            <div class="col-md-4">
+              <h4>Team: <b><a href="{% url 'team-details' form_settings.team.id %}">{{form_settings.team.title|title}}</a></b></h4>
+              <h4>Project: <b><a href="{% url 'project-details' form_settings.project.id %}">{{form_settings.project.title|title}}</a></b></h4>
+            </div>
+            <div class="col-md-4">
+              <h4>Scheduled For: <b>{{form_settings.scheduled_time}}</b></h4>
+              <h4>Time Goal: <b>{{form_settings.meeting_time_goal}} Minutes</b></h4>
+            </div>
+            <div class="row text-center">
+              <div class="col-md-12">
+                {% if form_settings.sometimes_record %} 
+                  <p class="text-center text-dark mt-4">🎥 Form offers Recording Link Field</p>
+                {% endif %}
+                {% if form_settings.meeting_room_link %} 
+                  <a class="text-center btn btn-outline-primary mt-4" style="color:#444444 !important;" href="{{form_settings.meeting_room_link}}"><i class=" bi bi-link"></i> Static Meeting Room Link</a>
+                  <br>
+                {% endif %}
+
+                <p class="lead mt-4" style="cursor:pointer;" onclick="copyLink()"><i class="bi bi-clipboard"></i> Click Here to Copy Shareable Link</p>
+                
+
+                <script>
+                  // location.pathname.split('/')[3]
+                  function copyLink() {
+                    /* Get the text field */
+                    var copyText = '127.0.0.1:8000' + location.pathname
+                    /* Great Resource https://howtojs.io/alternative-to-document-execcommand-to-copy-to-clipboard-in-the-browsers-using-javascript/ */
+                    if(navigator.clipboard) {
+                            navigator.clipboard.writeText(copyText).then(() => {
+                                window.alert('Copied: ' + copyText)
+                            })
+                        } else {
+                            console.log('Browser Not compatible')
+                        }
+
+                   }
+                  
+                </script>
+
+                <div class="mt-4">{{time_tracker|safe}}</div>
+                <a href="{% url 'new-note' form_settings.id %}" class="get-started-btn mt-4 mb-2">Create a Note</a>
+                <br>
+                
+                <a style="font-size:12px;" class="mt-4 get-started-btn-inverted" href="{% url 'edit-form' form_settings.id %}"><i class="bi bi-pencil text-warning"></i> Edit</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+        {% if entries %} 
+        <section class="card p-5">
+            <table class="table table-borderless datatable">
+              <thead>
+                <tr>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Date Of</th>
+                  <th scope="col">Form</th>
+                  <th scope="col">Project</th>
+                  <th scope="col">Team</th>
+                  <th scope="col">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in entries %}
+                <tr>
+                  <!-- Start Priority -->
+                  <!-- {% if entry.meeting_priority == "Low Priority" %}
+                  <td><a href="#" class="text-success"></a></td>
+                  {% endif %}
+                  {% if entry.meeting_priority == "Medium Priority" %}
+                  <td><a href="#" class="text-warning">{{entry.meeting_priority}}</a></td>
+                  {% endif %}
+                  {% if entry.meeting_priority == "High Priority" %}
+                  <td><a href="#" class="text-danger">{{entry.meeting_priority}}</a></td>
+                  {% endif %} -->
+                  <td>{{entry.meeting_priority}}</td>
+                  <!-- End Priority -->
+                  <td>{{entry.created|date:"M d, Y" }}</td>
+                  <td><a href="{% url 'form-details' entry.form_settings.pk %}">{{entry.form_settings.title}}</a></td>
+                  <td><a href="{% url 'project-details' entry.form_settings.project.pk %}">{{entry.form_settings.project.title}}</a></td>
+                  <td><a href="{% url 'team-details' entry.form_settings.team.pk %}">{{entry.form_settings.team.title}}</a></td>
+                  <td><a href="{% url 'note-details' entry.pk %}" class="get-started-btn">See Entry</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <div class="row">
+              <h5 class="mt-5 text-center" style="color:grey;">No forms have been filled out yet!</h5>
+            </div>
+          </section>
+          {% endif %}
+
+      </main>
+            
+            
+            
+
+            
+             
+
+        
+
+{% endblock content %}
+

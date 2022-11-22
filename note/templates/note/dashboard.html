@@ -1,0 +1,159 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Dashboard {% endblock title %}
+{% block content %} 
+
+
+ 
+        
+  <main id="main" class="main">
+
+    <header class="text-center">
+      <h2><i class="bi bi-pencil-square text-warning"></i> <span id="dashboardTitle"></span> <span class="text-warning"> Dashboard</span></h2>
+      <p class="lead">Make yourself at home.</p>
+    </header>
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <div class="col-md-12 text-center">
+          {% if made_share_url %} 
+            <!-- check if this is a team_user -->
+            {% if user.team_user %}
+            {% else %}
+              <div class="text-center">
+                <p class="lead mt-4 text-warning get-started-btn-inverted" style="cursor:pointer;" onclick="copyInviteLink()"><i class="bi bi-clipboard"></i> Click to Copy Team Invite Link</p>
+              </div>
+              <input id="managerID" value="{{user.manager_id}}" type="text" class="invisible">
+            {% endif %}
+          {% else %} 
+            <a href="{% url 'new-share-url' %}" class="mb-5 get-started-btn"><i class="bi bi-people"></i> Create Team Invite Link</a>
+          {% endif %}
+        </div>
+
+        
+
+        <!-- Left side columns -->
+        <div class="col-lg-12 invisible" id="dashboardTopRow">
+          <div class="row">
+
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Meetings <span>| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-workspace"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 class="text-success">+ 23%</h6>
+                      <span class="text-success small pt-1 fw-bold">12</span> <span class="text-muted small pt-2 ps-1">Meetings</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Time Goals <span>| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-alarm-fill"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 class="text-success">+ 15%</h6>
+                      <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">Increase</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-xxl-4 col-md-6">
+            
+          <!-- Recent Comments -->
+          <div class="card">
+
+            <div class="card-body">
+              <h5 class="card-title">Recent Comments</h5>
+
+              <div class="activity">
+                {% if recent_notes %}
+                {% for note in recent_notes %}
+                <div class="activity-item d-flex">
+                  <div class="activite-label">{{note.created|date:"M d, Y"}}</div>
+                  <i class='bi bi-circle-fill activity-badge text-warning align-self-start'></i>
+                  <div class="activity-content">
+                    <a href="{% url 'note-details' note.pk %}" class="fw-bold text-dark">{{note.form_settings.title}}</a>
+                  </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p>No comments yet..</p>
+                {% endif %}
+              </div>
+
+            </div>
+          </div><!-- End Recent Comments -->
+
+          
+       
+        </div> 
+
+        <div class="col-xxl-4 col-md-6">
+
+            <!-- Recent Notes -->
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Recent Notes</h5>
+  
+                <div class="activity">
+                  {% if recent_notes %}
+                  {% for note in recent_notes %}
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">{{note.created|date:"M d, Y"}}</div>
+                    <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                    <div class="activity-content">
+                      <a href="{% url 'note-details' note.pk %}" class="fw-bold text-dark">{{note.form_settings.title}}</a>
+                    </div>
+                  </div>
+                  {% endfor %}
+                  {% else %}
+                  <p>No notes yet..</p>
+                  {% endif %}
+   
+                </div>
+  
+              </div>
+            </div><!-- End Recent Notes -->
+
+
+          
+       
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+        
+ 
+
+{% endblock content %}
+

@@ -1,0 +1,78 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Archived Contacts {% endblock title %}
+{% block content %} 
+
+        
+  <main id="main" class="main">
+
+    {% include "note/alert.html" %}
+
+    <section class="section">
+      
+        <div class="container-fluid">
+          <header class="text-center">
+            <h2><i class="bi bi-pencil-square text-warning"></i> Archived <span class="text-warning"> Contacts</span></h2>
+            <p class="lead">View your Archived Contacts.</p>
+          </header>
+          <div class="row justify-content-center">
+             <!-- End Table -->
+             <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                      <a href="{% url 'contacts' %}" class="mb-4 mt-4 get-started-btn-inverted">View All Contacts</a>
+                    </div>
+                  </div>
+                  
+                <div class="card-body">
+                  {% if contacts %}
+                  
+                 
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Notifications</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Revive</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for contact in contacts %}
+                      <tr>
+                        <td>{{contact.contact_user_account.first_name}} {{contact.contact_user_account.last_name}}</td>
+                        <td>{% if contact.status == 'Team Member' %}<p class="text-primary">Team Member</p>{% endif %}{% if contact.status == 'Stakeholder' %}<p class="text-warning">Stakeholder</p>{% endif %}{% if contact.status == 'Other' %}<p>Other</p>{% endif %}</td>
+                        <td>{% if contact.receive_email_notifications %}<p class="text-success">Accepting</p>{% else %}<p class="text-danger">Not Accepting</p>{% endif %}</td>
+                        <td><a href="{% url 'contact-details' contact.contact_user_account.id %}">Details <img class="rounded-circle" style="width:40px;" src="http://127.0.0.1:8000{{contact.contact_user_account.imageURL}}" alt=""></a></td>
+                        <td><a href="{% url 'revive-contact' contact.id %}"><i class="bi bi-check text-success"></i></a></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <div class="row p-5">
+                    <div class="col-md-12 text-center">
+                        <h4>Nothing to see here... 👾</h4> 
+                    </div>
+                  </div>
+                  {% endif %}
+
+                </div>
+
+              </div>
+            </div><!-- End Table -->
+          </div>
+        </div>
+
+    </section>
+
+  </main>
+
+        
+
+{% endblock content %}
+

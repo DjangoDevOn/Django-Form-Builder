@@ -1,0 +1,41 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | New Team {% endblock title %}
+{% block content %} 
+{% load crispy_forms_tags %}
+
+        
+  <main id="main" class="main"></main>
+
+    <section class="section">
+      
+        <div class="container-fluid" style="margin-left:8%;">
+          <header class="text-center">
+            <h2><i class="bi bi-pencil-square text-warning"></i> New <span class="text-warning"> Team</span></h2>
+          </header>
+          <form method="POST">
+            <div class="row justify-content-center">
+              <!-- End Table -->
+              <div class="col-md-4">
+                <div class="card p-5">
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                </div>
+                <div class="text-center">
+                  <button class="get-started-btn mb-5" type="submit">Create Team</button>
+                </div>
+              </div>
+              
+
+            </div>
+          </form>
+        </div>
+
+    </section>
+
+  </main>
+
+        
+
+{% endblock content %}
+

@@ -1,0 +1,42 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Account Settings {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+
+  {% if messages %}
+  <div class="alert-warning p-2 pt-4 mt-2" id="alert">
+      {% for message in messages %}
+        <p class="text-center">{{ message }}</p>
+      {% endfor %}
+  </div>
+  <script>
+    const alertBox = document.getElementById('alert')
+    function hideAlert() {
+        alertBox.remove()
+    }
+    setTimeout(hideAlert, 6000)
+  </script>
+  {% endif %}
+  
+  <section class="no-padding-top no-padding-bottom">
+  <div class="container-fluid py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+          <div class="card p-5 body text-center">
+            <img src="{{user.imageURL}}" alt="avatar" class="rounded-circle img-fluid">
+            <h2 class="my-3 text-dark">{{user.first_name|title}} {{user.last_name|title}}</h2>
+            <h5 class="text-warning mb-4">Since {{user.created|date:"M d, Y"}}</h5>
+            <p><i>{% if user.receive_email_notifications %}<span class="text-success"><i class="bi bi-bell-fill"></i> Email Notifications On</span>{% else %}<span class="text-danger"><i class="bi bi-bell-slash-fill"></i> Email Notifications Off</span>{% endif %}</i></p>
+            <p class="mb-0"><b>{{user.email}}</b> <a href="{% url 'edit-profile' user.id %}" class="mt-4 get-started-btn-inverted"><i class="fa fa-pencil"></i> Edit Profile</a></p>
+          </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+</main><!-- End #main -->
+ 
+
+       {% endblock content %}

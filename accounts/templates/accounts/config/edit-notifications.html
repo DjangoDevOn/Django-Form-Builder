@@ -1,0 +1,35 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Edit Notifications {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<main id="main" class="main">
+    <section class="section">
+  
+
+<div class="page-content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">Edit Notifications</h2>
+        </div>
+    </div>
+
+    <section>
+        <div class="block mt-5">
+            <h3 class="mb-3 text-center">Edit Notifications Settings</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form|crispy }}
+                <button style="margin-right:8%;" class="get-started-btn mt-3">Save</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+
+</section>
+</main><!-- End #main -->
+ 
+{% endblock content %}

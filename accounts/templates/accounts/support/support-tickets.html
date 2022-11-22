@@ -1,0 +1,116 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Support Tickets {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+  <section class="section">
+
+    <div class="page-content">
+            
+            {% include 'support/support-header.html' %}
+
+          <section>
+            <div class="block mt-5">
+                <form
+                style="background-color: #fff; padding: 8%"
+                action="{% url 'support-tickets' %}"
+                method="POST"
+                role="form"
+                class="custom-form form"
+              >
+                {% csrf_token %}
+                <div class="form-row">
+                  <div class="col-md-12 form-group">
+                    <input
+                      autofocus
+                      type="text"
+                      name="subject"
+                      class="form-control"
+                      id="subject"
+                      placeholder="A brief summary of your issue"
+                      data-rule="minlen:4"
+                      data-msg="Please enter at least 4 chars"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <textarea
+                    class="form-control"
+                    name="description"
+                    rows="4"
+                    data-rule="required"
+                    data-msg="Please explain in more detail"
+                    placeholder="Please explain in more detail"
+                  ></textarea>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="get-started-btn mt-3">
+                    Create Support Ticket
+                  </button>
+                </div>
+              </form>
+
+
+            {% if tickets %}
+            <br>
+            <h3 class="mt-5 mb-4 text-center">Open Tickets</h3>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Status</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Body</th>
+                  <th scope="col">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for ticket in tickets %}
+              {% if ticket.status == 'OPEN' %}
+                <tr>
+                  <td><span class="text-purple">OPEN</span></td>
+                  <td>{{ ticket.subject|truncatewords:9 }}</td>
+                  <td>{{ ticket.description|truncatewords:9 }}</td>
+                  <td><a class="get-started-btn mt-3 btn-sm" href="{% url 'ticket' ticket.pk %}"><i class="fa fa-arrow-right"></i> More</a></td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </tbody>
+            </table>
+
+
+            <br>
+            <h3 class="mt-5 mb-4 text-center">Closed / Paused Tickets</h3>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Status</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Body</th>
+                  <th scope="col">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for ticket in tickets %}
+              {% if ticket.status == 'CLOSED' or ticket.status == 'PAUSED' %}
+                <tr>
+                  <td>{% if ticket.status == 'PAUSED' %}<span class="text-muted">{{ ticket.status }}</span>{% else %}<span class="text-danger">{{ ticket.status }}</span>{% endif %}</td>
+                  <td>{{ ticket.subject|truncatewords:9 }}</td>
+                  <td>{{ ticket.description|truncatewords:9 }}</td>
+                  <td><a class="get-started-btn mt-3 btn-sm" href="{% url 'ticket' ticket.pk %}"><i class="fa fa-arrow-right"></i> More</a></td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+
+            </div>
+          </section>
+    </div>
+
+  </section>
+</main><!-- End #main -->
+ 
+
+{% endblock content %}

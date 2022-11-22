@@ -1,0 +1,321 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | {{note.form_settings.title}} {% endblock title %}
+{% block content %} 
+
+
+
+<!-- Delete Comment Modal -->
+<div id="deleteModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span onclick="closeModal()" id="deleteCommentClose" class="close">&times;</span>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+          <h4>Are you sure you want to delete this comment?</h4>
+          <div class="row">
+            <div class="col-md-6 mb-5">
+              <form method="POST" action="{% url 'delete-comment' note_details.id %}">
+                {% csrf_token %}
+                <!-- invisible id value -->
+                <input type="text" class="invisible" name="deleteCommentID" id="deleteCommentID">
+                <!-- end invisible id value -->
+                <button class="get-started-btn text-success" style="cursor:pointer; background-color:transparent !important;">Yes</button>      
+              </form>
+            </div>
+            <div class="col-md-6">
+              <p class="get-started-btn text-danger" onclick="closeModal()" style="margin-top:13%; cursor:pointer; background-color:transparent !important;">No</p>   
+            </div>
+          </div>   
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        
+  <main id="main" class="main">
+    
+    <!-- JS Alert for Edit/Delete Comment -->
+    <div class="alert alert-warning invisible" id="commentChangeUpdateSection" role="alert" id="alert">
+      <div class="container-fluid">
+        <div class="row justify-content-center">
+          <div class="col-md-12 text-center">
+            <h4 id="commentChangeUpdateAlert" class="mt-2"></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End JS Alert for Edit/Delete Comment -->
+
+    <header class="text-center">
+      <h2><i class="bi bi-ui-checks text-warning"></i> Meeting Details</h2>
+      {% if note_details.archived %}
+      <p class="text-danger">ARCHIVED</p>
+      {% endif %}
+      {% if note_details.has_comments %}<a href="#comments" class="text-success">See Comments</a>{% else %}No Comments Yet..{% endif %}
+    </header>
+
+    <section class="section">
+      
+      <div class="container-fluid">
+        <div class="row justify-content-center p-5">
+          <div class="col-md-12 text-center mb-3">
+            <h3><b>{{note_details.form_settings.title|title}}</b></h3>
+            <p class="lead">This Was a <b class="text-warning">{{note_details.meeting_priority}}</b> Meeting {% if went_over_time > 1 %}| Went <b>{{went_over_time}} Minutes</b> Over{% endif %}</p>
+            <i><small>Created: <b>{{note_details.created|date:"M d, Y" }}</b></small></i>
+            <br><p class="get-started-btn mt-4 mb-4" style="cursor:pointer;" onclick="loadIframeWithYesterdaysNote()">🗓️ See Yesterday's Note</p>
+          </div>
+          <div class="row">
+            <div class="col-md-6 card p-5">
+              <h4 class="text-center mb-4 text-warning"><b>Meeting Overview:</b></h4>
+              <h5 class="mt-2">Team: <b><a href="{% url 'team-details' note_details.form_settings.team.id%}">{{note_details.form_settings.team.title|title}}</a></b></h5>
+              <h5 class="mt-2">Project: <b><a href="{% url 'project-details' note_details.form_settings.project.id%}">{{note_details.form_settings.project.title|title}}</a></b></h5>
+              <h5 class="mt-2">Started At: <b>{{note_details.form_settings.scheduled_time}}</b></h5>
+              <h5 class="mt-2">Time Goal: <b>{{note_details.form_settings.meeting_time_goal}} Minutes</b></h5>
+              <h5 class="mt-2">Lasted: <b>{{note_details.meeting_time_realization}} Minutes</b></h5> 
+              {% if note_details.get_participants %}
+              <hr class="mt-5">
+                <h4 class="text-center mb-4 text-warning"><b>Attended:</b></h4>
+                {% for participant in note_details.get_participants %}
+                  <a href="{% url 'contact-details' participant.contact_user_account.id %}" class="text-dark"><img class="rounded-circle" src="http://127.0.0.1:8000{{participant.contact_user_account.imageURL}}" style="width:40px;" alt=""> {{participant.contact_user_account.first_name}} {{participant.contact_user_account.last_name}}</a>
+                {% endfor %}
+              {% endif %}
+            </div>
+            <div class="col-md-6 card p-5">
+              {% if note_details.get_notified %} <!-- This is an optional field -->
+                <h4 class="text-center mb-4 text-warning"><b>Notified:</b></h4>
+                <!-- start inner loop -->
+                {% for participant in note_details.get_notified %}
+                  <a href="{% url 'contact-details' participant.contact_user_account.id%}" class="text-dark"><img class="rounded-circle" src="http://127.0.0.1:8000{{participant.contact_user_account.imageURL}}" style="width:40px;" alt=""> {{participant.contact_user_account.first_name}} {{participant.contact_user_account.last_name}}</a>
+                {% endfor %}
+                <!-- end inner loop -->
+              {% else %}
+                <p class="text-center mb-4 text-warning"><b>No Team Members Were Notified</b></p>
+              {% endif %}
+              {% if note_details.viewed_by_list %}
+                <hr>
+                <h4 class="text-center mb-4 text-warning"><b>Viewed By:</b></h4>
+                  {% for participant in note_details.get_viewed_by_list %}
+                  <a href="{% url 'contact-details' participant.contact_user_account.id %}" class="text-dark"><img class="rounded-circle" src="http://127.0.0.1:8000{{participant.contact_user_account.imageURL}}" style="width:40px;" alt=""> {{participant.contact_user_account.first_name}} {{participant.contact_user_account.last_name}}</a>
+                  {% endfor %}
+                {% endif %}
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-md-12 mt-5">
+              {% if note_details.form_settings.sometimes_record %} 
+                <a href="{{ note_details.video_link }}" target="__blank" class="mb-5 text-center btn btn-outline-primary" style="color:#444444 !important;">🎥 Click to View Meeting Recording</a>
+              {% endif %}
+              <br>
+              {% if user.team_user %}
+                <!-- Hide LINKS from team users -->
+              {% else %}
+              <!-- start inner for loop -->
+                {% if note_details.form_settings.meeting_room_link %} 
+                  <a class="lead text-center text-dark" target="__blank" href="{{note_details.form_settings.meeting_room_link}}"><i class="text-warning bi bi-link"></i> Visit Static Meeting Room</a>
+                  <br>
+                {% endif %}
+              <!-- end inner for loop -->
+              {% endif %}
+
+              <div class="mt-4">{{time_tracker|safe}}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 card p-5">
+            {% if form_questions %}
+              <h3 class="text-center p-3 mb-5">📋 Discussion Notes:</h3>
+            {% else %}
+              <p class="text-center p-3 mb-2">For some reason, the notes are missing.. 😲</p>
+            {% endif %}
+            {% for question in form_questions %}
+              <div class="card p-5">
+                <h4 class="p-2">{{question.question}}</h4>
+                <hr>
+                {% for q in question.get_responses %}
+                  <p class="lead">{{q}}</p>
+                {% endfor %}
+              </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AJAX GET - Comments Form -->
+    <section id="comments">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 card p-5">
+            
+              <!-- Ajax loop goes here -->
+              <!-- Spinner -->
+              <div class="row" id="comments">
+                <div class="col-md-12 text-center">
+                  <div class="mt-5 mb-5 spinner-border text-warning" role="status" id="spinner-box"></div>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+  <!-- AJAX POST - Comment Form -->
+
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="card-md-12 card p-5" id="commentForm">
+            <form id="commentForm">
+              <input id="commentContent" name="commentContent" type="text" placeholder="Write your comment..">
+              <input type="submit" value="COMMENT">
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+ 
+    <script>
+      // Cookie / Post Stuff
+      const csrf = document.getElementsByName('csrfmiddlewaretoken')
+
+      const getCookie = (name)=> {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+      // End Cookie / Post Stuff
+
+
+    // Get Comments Stuff
+    const commentsBox = document.getElementById('comments')
+    const spinnerBox = document.getElementById('spinner-box')
+    const getComments = () => {  
+        commentsBox.innerHTML = ''    
+        $.ajax({
+        type: 'GET',
+        url: `/note/get-comments-data/`,
+        success: function(response){
+            console.log(response)
+            const data = response.data
+            spinnerBox.remove()
+            data.forEach(el => {
+              commentsBox.innerHTML += `
+                  <div class="card p-3 mt-4">
+                  <h4 class="p-4 mt-3">${el.comment}
+                    ${ el.owner ? `
+                      <span style="font-size:12px !important;">
+                        <i onclick="deleteComment(${el.id})" class="text-danger bi bi-trash m-2"></i>
+                      </span></h4>
+                      ` : '</h4>'}
+                    
+                  <p class="p-2 text-light"><img class="rounded-circle" src="http://127.0.0.1:8000${el.profile_photo}" style="width:40px; margin-right:1%;" alt="${el.name}'s profile photo"> ${el.name} | ${el.date}</p>
+                </div>
+                `
+            });
+            if (!$.trim(data)){   
+              commentsBox.innerHTML = `<p class="lead text-center mb-3 mt-4">💬 Be the first to comment!</p>`
+            }
+        },
+        error: function(error){
+            console.log('error', error)
+        }
+    }) // end ajax
+    }
+
+    getComments();
+    
+    // End Get Comments Stuff
+
+      
+    // Post Comment Stuff
+    const commentContent = document.getElementById('commentContent')
+    const commentForm = document.getElementById('commentForm')
+
+    commentForm.addEventListener('submit', commentForm=>{
+        commentForm.preventDefault() // prevent form from submiting - we want to send data w/ ajax
+        $.ajax({
+          type: 'POST',
+          url: `/note/create-comment/${location.pathname.split('/')[3]}/`,
+          data: {
+            'csrfmiddlewaretoken': csrftoken,
+            'commentContent': commentContent.value,
+          },
+          success: function(response){
+            commentContent.value=''
+            getComments(); // call getComments to reload comments
+          },
+          error: function(error){
+            // console.log(error)
+          }
+        }) // end ajax
+      }) // end form event listener
+
+    // End Post Comment Stuff 
+     
+
+    // Delete comment process
+      const deleteModal = document.getElementById('deleteModal')
+
+      function deleteComment(id) {
+        var inputField = document.getElementById('deleteCommentID')
+        inputField.value = id
+        deleteModal.style.display = "block";
+        deleteCommentID.value = id
+      }
+
+      function closeModal() {
+        deleteModal.style.display = "none";
+      }
+
+     
+    // End Delete comment process
+  
+
+
+    // Show Yesterday's (Previous) Note in same Form using iFrame
+    function loadIframeWithYesterdaysNote() {
+      currentSlug = location.pathname.split('/')[3]
+      currentSlug = currentSlug -1
+      if (currentSlug > 0) {
+        yesterdaysNoteURL = 'http://127.0.0.1:8000/note/note-details/' + currentSlug + '/'
+        // open link in new tab, follow
+        window.open(yesterdaysNoteURL, '_blank');
+      } else {
+        window.alert('Sorry, this is the first Note for this Form!')
+      }
+    }
+
+   
+    </script>
+
+  </main>
+{% endblock content %}
+

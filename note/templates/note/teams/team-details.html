@@ -1,0 +1,68 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Team Details {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+  <section class="section">
+    <div class="page-content">
+        <div class="page-header">
+          <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">Team Details</h2>
+          </div>
+        </div>
+        <section class="no-padding-top no-padding-bottom">
+        <div class="container py-5">
+          <div class="row">
+            <div class="col-lg-4">
+                <div class="card p-5 body text-center">
+                  <img src="http://127.0.0.1:8000/media/team-details.jpg" alt="avatar" class="rounded-circle img-fluid">
+                  <h5 class="my-3 text-dark">Team Name: <br><b class="text-warning">{{team_details.title|title}}</b></h5>
+                  <p class="mb-4">Created {{team_details.created|date:"M d, Y"}}</p>
+                </div>
+
+            </div>
+            <div class="col-lg-8">
+                <div class="card p-5">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <p class="mb-0">Team Projects:</p>
+                    </div>
+                    <div class="col-sm-8">
+                      <ul>
+                        {% for project in team_projects %}
+                          <li><a href="{% url 'project-details' project.id %}" class="text-dark">{{project.title|title}}</a></li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <p class="mb-0">Team Members:</p>
+                    </div>
+                    <div class="col-sm-8">
+                      {% for team_member in team_contacts %}
+                        <a href="{% url 'contact-details' team_member.contact_user_account.id %}" class="text-dark"><img class="rounded-circle" src="http://127.0.0.1:8000{{team_member.contact_user_account.imageURL}}" style="width:40px;" alt=""> {{team_member.contact_user_account.first_name|title}} {{team_member.contact_user_account.last_name|title}}</a>
+                        <br><br>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-md-12 text-center">
+                      <a href="{% url 'edit-team' team_details.id  %}" class="mt-5 get-started-btn"><i class="bi bi-pencil"></i> Edit Team</a>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+        </section>
+    </div>
+  </section>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,49 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | Support Ticket Response {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+  <section class="section">
+
+ <div class="page-content">
+         
+  {% include 'support/support-header.html' %}
+
+      <section>
+        <div class="block mt-5">
+
+
+             <form
+            style="background-color: #fff; padding: 8%"
+            action="{% url 'add-ticket-response' ticket.id %}"
+            method="POST"
+            role="form"
+            class="custom-form form"
+          >
+            {% csrf_token %}
+            <div class="form-group">
+              <textarea
+                autofocus
+                class="form-control"
+                name="msg_content"
+                rows="6"
+                data-rule="required"
+                data-msg="Type your response here"
+                placeholder="Type your response here"
+              ></textarea>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="get-started-btn mt-3">
+                Submit Response
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+</div>
+
+</section>
+</main><!-- End #main -->
+ 
+{% endblock content %}

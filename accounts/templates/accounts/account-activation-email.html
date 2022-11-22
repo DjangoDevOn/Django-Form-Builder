@@ -1,0 +1,7 @@
+{% autoescape off %}
+Hey {{ user.first_name }}!
+
+Follow the link below to upgrade your standup meetings with StandingNotation! 🥳
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endautoescape %}

@@ -1,0 +1,22 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | 🔥 {% endblock title %}
+{% block content %}
+
+
+<section id="hero" class="d-flex align-items-center justify-content-center">
+  <div class="container" data-aos="fade-up">
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="col-lg-6 text-center">
+        <h1 class="text-center">Yikes!</h1>
+        <p class="text-center" style="color:#fff;">You broke the app.. Nice.</p>
+        <img class="text-center" style="width:500px;" src="{% static 'img/error.png' %}" alt="">
+        <p onclick="window.history.go(-1)" class="text-center get-started-btn mt-5 mb-3">Go Back to Saftey <i class="bx bx-arrow-from-left"></i></p>
+      </div>
+    </div>
+  </div>
+</section> 
+ 
+
+
+{% endblock content %}

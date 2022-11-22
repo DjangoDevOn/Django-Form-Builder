@@ -1,0 +1,76 @@
+{% extends 'note/base.html' %}
+{% load static %}
+{% block title %} StandingNotation | User Profile {% endblock title %}
+{% block content %}
+
+<main id="main" class="main">
+
+  <section class="section">
+ <div class="page-content">
+        <div class="page-header">
+          <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">User Profile</h2>
+          </div>
+        </div>
+        <section class="no-padding-top no-padding-bottom">
+        <div class="container py-5">
+          <div class="row">
+            <div class="col-lg-4">
+                <div class="card p-5 body text-center">
+                  <img src="{{profile.imageURL}}" alt="avatar" class="rounded-circle img-fluid">
+                  <h5 class="my-3 text-dark">{{user.first_name|title}}</h5>
+                  <p class="text-muted mb-4">Since {{user.created|date:"M d, Y"}}</p>
+                </div>
+
+            </div>
+            <div class="col-lg-8">
+                <div class="card p-5">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Username</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="mb-0"><b>{{user.username|title}}</b></p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">First Name</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="mb-0"><b>{{profile.first_name}}</b></p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Last Name</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="mb-0"><b>{{profile.last_name}}</b></p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Email</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="mb-0"><a href="mailto:{{user.email}}"><b>{{user.email}}</b></a></p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+</section>
+
+
+</section>
+</main><!-- End #main -->
+ 
+
+       {% endblock content %}
